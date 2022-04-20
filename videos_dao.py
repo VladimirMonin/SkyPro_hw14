@@ -33,7 +33,7 @@ class VideosDao:
     def get_last_by_title(self, title):
         """Поиск по названию. Если таких фильмов несколько, выводит самый свежий.
          Возвращает данные в виде словаря"""
-        title_sqlite = "'" + "%" + str(title) + "%" + "'"
+        title_sqlite = '"' + "%" + str(title) + "%" + '"'
         sqlite_query = f"""
                 SELECT title, country, MAX(release_year), listed_in, description
                 FROM netflix
@@ -44,30 +44,24 @@ class VideosDao:
         result_dict = {}
 
         if result[0][0] is not None:
-
-            key_list = ['is_search', 'title', 'country', 'release_year', 'genre', 'description']
+            result_dict['is_search'] = True
+            key_list = ['title', 'country', 'release_year', 'genre', 'description']
             count = 0
-            result_dict = {}
-            for key in key_list: # Это ведь лучше прямого назначения для КАЖДОГО ключа? Типа result_dict['country'] = result[0][1]
+
+            for key in key_list: # Это ведь лучше прямого назначения для КАЖДОГО ключа? По типу result_dict['country'] = result[0][1]
                 result_dict[key] = result[0][count]
                 count += 1
-                if count > 4: break
+                if count == 4:  # Обрезаем символ \n который закрадывается из базы в ключ description
+                    result_dict[key] = result[0][count].strip('\n')
+                    break
 
-        #     result_dict['is_search'] = True
-        #     result_dict['title'] = result[0][0]
-        #     result_dict['country'] = result[0][1]
-        #     result_dict['release_year'] = result[0][2]
-        #     result_dict['genre'] = result[0][3]
-        #     result_dict['description'] = result[0][4].strip('\n')
-        #
-        # else:
-        #     result_dict['is_search'] = False
-
+        else:
+            result_dict['is_search'] = False
         return result_dict
 
 
 
-dao = VideosDao()
-name = dao.get_last_by_title("ava")
-print(name)
+# dao = VideosDao()
+# search = dao.get_last_by_title("ava")
+# print(search)
 
