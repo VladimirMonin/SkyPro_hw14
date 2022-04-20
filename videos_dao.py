@@ -49,10 +49,10 @@ class VideosDao:
 
             for key in key_list: # Это ведь лучше прямого назначения для КАЖДОГО ключа? По типу result_dict['country'] = result[0][1]
                 result_dict[key] = result[0][count]
-                count += 1
                 if count == 4:  # Обрезаем символ \n который закрадывается из базы в ключ description
                     result_dict[key] = result[0][count].strip('\n')
                     break
+                count += 1
 
         else:
             result_dict['is_search'] = False
