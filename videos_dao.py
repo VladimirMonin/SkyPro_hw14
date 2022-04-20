@@ -58,9 +58,34 @@ class VideosDao:
             result_dict['is_search'] = False
         return result_dict
 
+    def get_film_by_years_range(self, start, finish):
+        """Поиск по диапазону лет. На каждый год ограничение выдачи не более 100 тайтлов"""
 
+        start = int(start)  # Интуем
+        finish = int(finish)
+
+        results_list = []
+
+        for year in range(finish, start-1, -1):  # Цикл по диапазону лет +1
+
+            sqlite_query = f"""
+                        
+                        SELECT title, release_year
+                        FROM netflix
+                        WHERE release_year = {year}
+                        LIMIT 100
+                            """
+            result = self.get_sqlite_connection(sqlite_query)  # Для 1 года - 1 запрос
+
+            for film in result:
+                film_dict = {}
+                film_dict['title'] = film[0]
+                film_dict['release_year'] = film[1]
+                results_list.append(film_dict)
+
+        return results_list
 
 # dao = VideosDao()
-# search = dao.get_last_by_title("ava")
+# search = dao.get_film_by_years_range(1992, 1995)
 # print(search)
 

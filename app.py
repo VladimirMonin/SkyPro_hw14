@@ -21,7 +21,12 @@ def get_film_by_title(title):
 def get_film_by_range(start_year, finish_year):
     """ Шаг 2. Поиск фильмов по диапазону лет"""
     logging.info(f'Ищем фильмы в диапазоне от{start_year} и до {finish_year}')
+    result = dao.get_film_by_years_range(start_year, finish_year)
+    return jsonify(result)
     pass
 
 
-app.run(debug=True)
+app.config['JSON_AS_ASCII'] = False
+
+if __name__ == '__main__':
+    app.run(debug=True)
