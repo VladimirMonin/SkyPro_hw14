@@ -44,7 +44,6 @@ class VideosDao:
         result_dict = {}
 
         if result[0][0] is not None:
-            result_dict['is_search'] = True
             key_list = ['title', 'country', 'release_year', 'genre', 'description']
             count = 0
 
