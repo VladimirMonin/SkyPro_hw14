@@ -47,7 +47,7 @@ class VideosDao:
             key_list = ['title', 'country', 'release_year', 'genre', 'description']
             count = 0
 
-            for key in key_list: # Это ведь лучше прямого назначения для КАЖДОГО ключа? По типу result_dict['country'] = result[0][1]
+            for key in key_list: # На старте это казалось удачной идеей ))))) Хотя ключи нагляднее
                 result_dict[key] = result[0][count]
                 if count == 4:  # Обрезаем символ \n который закрадывается из базы в ключ description
                     result_dict[key] = result[0][count].strip('\n')
@@ -88,6 +88,7 @@ class VideosDao:
     def get_rating_by_category(self, category):
 
         if category.lower() in RAITING_KATEGORIES.keys():
+            results_list = []
             categorys_list = RAITING_KATEGORIES[category]
             query_str = ""
 
@@ -104,21 +105,39 @@ class VideosDao:
             """
 
             result = self.get_sqlite_connection(sqlite_query)
-            return result
+
+            for film in result:
+                film_dict = {}
+                film_dict['title'] = film[0]
+                film_dict['rating'] = film[1]
+                film_dict['description'] = film[2].strip('\n')
+                results_list.append(film_dict)
+
+            return results_list
+
 
         else:
             return {'Оповещение!': 'Категории не существует. Но тут могла быть ваша реклама :)'}
 
     def get_10fresh_by_genre(self, genre):
+        genre = str(genre)
         sqlite_query = f"""
-                   SELECT title, rating, description, release_year
+                   SELECT title, description
                    FROM netflix
                    WHERE listed_in LIKE "%{genre}%"
                    ORDER BY release_year DESC
                    LIMIT 10
                    """
         result = self.get_sqlite_connection(sqlite_query)
-        return result
+
+        results_list = []
+        for film in result:
+            film_dict = {}
+            film_dict['title'] = film[0]
+            film_dict['description'] = film[1].strip('\n')
+            results_list.append(film_dict)
+
+        return results_list
 
 
 # dao = VideosDao()

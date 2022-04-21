@@ -38,8 +38,8 @@ def get_rating_by_category(category):
 @app.route('/genre/<genre>/')
 def get_data_by_genre(genre):
     logging.info(f'Ищем 10 самых свежих фильмов жанра:{genre}')
-    # result = dao.
-    # return jsonify(result)
+    result = dao.get_10fresh_by_genre(genre)
+    return jsonify(result)
 
 
 app.config['JSON_AS_ASCII'] = False
