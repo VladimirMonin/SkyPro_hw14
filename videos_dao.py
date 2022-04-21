@@ -109,8 +109,19 @@ class VideosDao:
         else:
             return {'Оповещение!': 'Категории не существует. Но тут могла быть ваша реклама :)'}
 
+    def get_10fresh_by_genre(self, genre):
+        sqlite_query = f"""
+                   SELECT title, rating, description, release_year
+                   FROM netflix
+                   WHERE listed_in LIKE "%{genre}%"
+                   ORDER BY release_year DESC
+                   LIMIT 10
+                   """
+        result = self.get_sqlite_connection(sqlite_query)
+        return result
+
 
 # dao = VideosDao()
-# search = dao.get_rating_by_category('family')
+# search = dao.get_10fresh_by_genre('Adventure')
 # print(search)
 
