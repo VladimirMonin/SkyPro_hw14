@@ -7,6 +7,7 @@ logging.basicConfig(encoding='utf-8', level=logging.INFO)
 dao = VideosDao()
 app = Flask(__name__)
 
+
 @app.route('/movie/<title>/')
 def get_film_by_title(title):
     """ Шаг 1. Поиск по названию самого свежего """
@@ -17,6 +18,7 @@ def get_film_by_title(title):
 
     return jsonify(single_post_dict)
 
+
 @app.route('/movie/<start_year>/to/<finish_year>/')
 def get_film_by_range(start_year, finish_year):
     """ Шаг 2. Поиск фильмов по диапазону лет"""
@@ -25,11 +27,19 @@ def get_film_by_range(start_year, finish_year):
     return jsonify(result)
     pass
 
+
 @app.route('/rating/<category>/')
 def get_rating_by_category(category):
     logging.info(f'Ищем фильмы с категорией{category}')
     result = dao.get_rating_by_category(category)
     return jsonify(result)
+
+
+@app.route('/genre/<genre>/')
+def get_data_by_genre(genre):
+    logging.info(f'Ищем 10 самых свежих фильмов жанра:{genre}')
+    # result = dao.
+    # return jsonify(result)
 
 
 app.config['JSON_AS_ASCII'] = False
