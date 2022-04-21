@@ -86,21 +86,31 @@ class VideosDao:
         return results_list
 
     def get_rating_by_category(self, category):
-        """children  # (включаем сюда рейтинг G)
-        family  # (G, PG, PG-13)
-        adult  # (R, NC-17)"""
+
         if category.lower() in RAITING_KATEGORIES.keys():
             categorys_list = RAITING_KATEGORIES[category]
+            query_str = ""
 
+            for cat in categorys_list:
+                category = '"'+cat+'" OR '
+                query_str += category
+
+            query_str = query_str.rstrip(' OR')
+
+            sqlite_query = f"""
+            SELECT title, rating, description
+            FROM netflix
+            WHERE rating = {query_str}
+            """
+
+            result = self.get_sqlite_connection(sqlite_query)
+            return result
 
         else:
             return {'Оповещение!': 'Категории не существует. Но тут могла быть ваша реклама :)'}
 
 
-
-
-
-dao = VideosDao()
-search = dao.get_rating_by_category('family')
-print(search[0])
+# dao = VideosDao()
+# search = dao.get_rating_by_category('family')
+# print(search)
 

@@ -27,24 +27,7 @@ def get_film_by_range(start_year, finish_year):
 
 @app.route('/rating/<category>/')
 def get_rating_by_category(category):
-    """Шаг 3. Несколько маршрутов для разных рейтингов
-    /rating/children #(включаем сюда рейтинг G)
-    /rating/family   #(G, PG, PG-13)
-    /rating/adult    #(R, NC-17)
-    """
-    categorys = ('children', 'family', 'adult')
-
-    if category == categorys[0]:
-        pass
-
-    elif category == categorys[1]:
-        pass
-
-    elif category == categorys[2]:
-        pass
-
-    else:
-        pass
+    pass
 
 
 app.config['JSON_AS_ASCII'] = False
