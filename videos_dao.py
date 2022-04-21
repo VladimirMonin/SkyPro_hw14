@@ -85,7 +85,22 @@ class VideosDao:
 
         return results_list
 
-# dao = VideosDao()
-# search = dao.get_film_by_years_range(1992, 1995)
-# print(search)
+    def get_rating_by_category(self, category):
+        """children  # (включаем сюда рейтинг G)
+        family  # (G, PG, PG-13)
+        adult  # (R, NC-17)"""
+        if category.lower() in RAITING_KATEGORIES.keys():
+            categorys_list = RAITING_KATEGORIES[category]
+
+
+        else:
+            return {'Оповещение!': 'Категории не существует. Но тут могла быть ваша реклама :)'}
+
+
+
+
+
+dao = VideosDao()
+search = dao.get_rating_by_category('family')
+print(search[0])
 
