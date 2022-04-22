@@ -2,23 +2,6 @@ from config import *
 import sqlite3
 
 
-# Структура таблицы
-# -----------------------
-# show_id — id тайтла
-# type — фильм или сериал
-# title — название
-# director — режиссер
-# cast — основные актеры
-# country — страна производства
-# date_added — когда добавлен на Нетфликс
-# release_year — когда выпущен в прокат
-# rating — возрастной рейтинг
-# duration — длительность
-# duration_type — минуты или сезоны
-# listed_in — список жанров и подборок
-# description — краткое описание
-# -----------------------
-
 class VideosDao:
 
     def get_sqlite_connection(self, sqlite_query):
@@ -33,30 +16,25 @@ class VideosDao:
     def get_last_by_title(self, title):
         """Поиск по названию. Если таких фильмов несколько, выводит самый свежий.
          Возвращает данные в виде словаря"""
-        title_sqlite = '"' + "%" + str(title) + "%" + '"'
+
         sqlite_query = f"""
                 SELECT title, country, MAX(release_year), listed_in, description
                 FROM netflix
-                WHERE title LIKE {title_sqlite}
-                        
+                WHERE title LIKE "%{title}%"
+                LIMIT 1
+
         """
         result = self.get_sqlite_connection(sqlite_query)
-        result_dict = {}
 
-        if result[0][0] is not None:
-            key_list = ['title', 'country', 'release_year', 'genre', 'description']
-            count = 0
+        film_dict = {}
+        for film in result:
+            film_dict['title'] = film[0]
+            film_dict['country'] = film[1]
+            film_dict['release_year'] = film[2]
+            film_dict['genre'] = film[3]
+            film_dict['description'] = film[4].strip('\n')
 
-            for key in key_list: # На старте это казалось удачной идеей ))))) Хотя ключи нагляднее
-                result_dict[key] = result[0][count]
-                if count == 4:  # Обрезаем символ \n который закрадывается из базы в ключ description
-                    result_dict[key] = result[0][count].strip('\n')
-                    break
-                count += 1
-
-        else:
-            result_dict['is_search'] = False
-        return result_dict
+        return film_dict
 
     def get_film_by_years_range(self, start, finish):
         """Поиск по диапазону лет. На каждый год ограничение выдачи не более 100 тайтлов"""
@@ -139,8 +117,41 @@ class VideosDao:
 
         return results_list
 
+    def get_by_type_gengre_year(self, type, genre, year):
+        sqlite_query = f"""
+        
+                    SELECT title, type, listed_in
+                    FROM netflix
+                    WHERE type = "{type}"
+                    AND release_year = "{year}"
+                    AND listed_in LIKE "%{genre}%"
+                    
+                        """
+        result = self.get_sqlite_connection(sqlite_query)
 
-# dao = VideosDao()
-# search = dao.get_10fresh_by_genre('Adventure')
-# print(search)
+        return result
 
+
+
+
+dao = VideosDao()
+search = dao.get_by_type_gengre_year('TV Show', 'Adventure', 2019)
+print(search)
+
+
+# Структура таблицы
+# -----------------------
+# show_id — id тайтла
+# type — фильм или сериал
+# title — название
+# director — режиссер
+# cast — основные актеры
+# country — страна производства
+# date_added — когда добавлен на Нетфликс
+# release_year — когда выпущен в прокат
+# rating — возрастной рейтинг
+# duration — длительность
+# duration_type — минуты или сезоны
+# listed_in — список жанров и подборок
+# description — краткое описание
+# -----------------------
