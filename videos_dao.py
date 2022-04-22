@@ -2,6 +2,7 @@ from config import *
 import sqlite3
 import json
 
+
 class VideosDao:
 
     def get_sqlite_connection(self, sqlite_query):
@@ -44,7 +45,7 @@ class VideosDao:
 
         results_list = []
 
-        for year in range(finish, start-1, -1):  # Цикл по диапазону лет +1
+        for year in range(finish, start - 1, -1):  # Цикл по диапазону лет +1
 
             sqlite_query = f"""
                         
@@ -64,14 +65,15 @@ class VideosDao:
         return results_list
 
     def get_rating_by_category(self, category):
+        """Поиск фильмов по запутанным американским рейтингам возрастных категорий (категории в конфиге)"""
 
         if category.lower() in RAITING_KATEGORIES.keys():
             results_list = []
             categorys_list = RAITING_KATEGORIES[category]
             query_str = ""
 
-            for cat in categorys_list:
-                category = '"'+cat+'" OR '
+            for cat in categorys_list:  # Возможно для этого есть более простой способ?
+                category = '"' + cat + '" OR '
                 query_str += category
 
             query_str = query_str.rstrip(' OR')
@@ -117,7 +119,36 @@ class VideosDao:
 
         return results_list
 
-    def get_by_type_gengre_year(self, type, genre, year):
+    def get_json_dumps(self, data):
+
+        result = json.dumps(data, ensure_ascii=False, indent=4)
+        return result
+
+    def get_friendly_acting_team(self, name1, name2):
+        sqlite_query = f"""
+
+                    SELECT "cast"
+                    FROM netflix
+                    WHERE "cast" LIKE "%{name1}%"
+                    AND "cast" LIKE "%{name2}%"
+
+                        """
+        result = self.get_sqlite_connection(sqlite_query)
+
+        buffer_list = []
+        for film in result:
+            for actor in film[0].split(', '):
+                if actor not in [name1, name2]:
+                    buffer_list.append(actor)
+
+        result_dict = {}
+        for actor in buffer_list:
+            played_count = buffer_list.count(actor)
+            if played_count >= 2:
+                result_dict[actor] = played_count
+        return self.get_json_dumps(result_dict)
+
+    def get_by_type_genre_year(self, type, genre, year):
         sqlite_query = f"""
         
                     SELECT title, type, listed_in
@@ -131,17 +162,13 @@ class VideosDao:
 
         return self.get_json_dumps(result)
 
-    def get_json_dumps(self, data):
 
-        result = json.dumps(data, ensure_ascii=False, indent=4)
-        return result
+dao = VideosDao()
 
+search = dao.get_friendly_acting_team('Jack Black', 'Dustin Hoffman')
+print(search)
 
-# dao = VideosDao()
-# search = dao.get_by_type_gengre_year('TV Show', 'Adventure', 2019)
-# print(search)
-
-
+# В качестве теста можно передать: Rose McIver и Ben Lamb, Jack Black и Dustin Hoffman.
 # Структура таблицы
 # -----------------------
 # show_id — id тайтла

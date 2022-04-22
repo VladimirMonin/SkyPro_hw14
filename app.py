@@ -28,11 +28,7 @@ def get_film_by_range(start_year, finish_year):
     pass
 
 
-@app.route('/rating/<category>/')
-def get_rating_by_category(category):
-    logging.info(f'Ищем фильмы с категорией{category}')
-    result = dao.get_rating_by_category(category)
-    return jsonify(result)
+
 
 
 @app.route('/genre/<genre>/')
