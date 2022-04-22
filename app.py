@@ -25,14 +25,19 @@ def get_film_by_range(start_year, finish_year):
     logging.info(f'Ищем фильмы в диапазоне от{start_year} и до {finish_year}')
     result = dao.get_film_by_years_range(start_year, finish_year)
     return jsonify(result)
-    pass
 
-
-
+@app.route('/rating/<rating>')
+def get_film_by_rating(rating):
+    """Шаг 3 поиск по запутанным американским рейтингам возрастных категорий """
+    logging.info(f'Ищем фильмы по простому для:{rating}')
+    result = dao.get_rating_by_category(rating)
+    logging.info(f'Получили из DAO:{result[:1]} и так далее')
+    return jsonify(result)
 
 
 @app.route('/genre/<genre>/')
 def get_data_by_genre(genre):
+    """Шаг 4 поиск по жанру 10 самых свежих """
     logging.info(f'Ищем 10 самых свежих фильмов жанра:{genre}')
     result = dao.get_10fresh_by_genre(genre)
     return jsonify(result)

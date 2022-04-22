@@ -95,11 +95,11 @@ class VideosDao:
 
             return results_list
 
-
         else:
             return {'Оповещение!': 'Категории не существует. Но тут могла быть ваша реклама :)'}
 
     def get_10fresh_by_genre(self, genre):
+        """Возвращает самые свежие 10 фильмов жанра"""
         genre = str(genre)
         sqlite_query = f"""
                    SELECT title, description
@@ -120,11 +120,12 @@ class VideosDao:
         return results_list
 
     def get_json_dumps(self, data):
-
+        """Делает json_dumps того, что в неё передадут"""
         result = json.dumps(data, ensure_ascii=False, indent=4)
         return result
 
     def get_friendly_acting_team(self, name1, name2):
+        """Получает пару актеров и ищет тех кто играл с ними 2 и более раз"""
         sqlite_query = f"""
 
                     SELECT "cast"
@@ -149,6 +150,7 @@ class VideosDao:
         return self.get_json_dumps(result_dict)
 
     def get_by_type_genre_year(self, type, genre, year):
+        """Получает жанр тип и год и возвращает подборку фильмов/сериалов"""
         sqlite_query = f"""
         
                     SELECT title, type, listed_in
@@ -162,26 +164,3 @@ class VideosDao:
 
         return self.get_json_dumps(result)
 
-
-dao = VideosDao()
-
-search = dao.get_friendly_acting_team('Jack Black', 'Dustin Hoffman')
-print(search)
-
-# В качестве теста можно передать: Rose McIver и Ben Lamb, Jack Black и Dustin Hoffman.
-# Структура таблицы
-# -----------------------
-# show_id — id тайтла
-# type — фильм или сериал
-# title — название
-# director — режиссер
-# cast — основные актеры
-# country — страна производства
-# date_added — когда добавлен на Нетфликс
-# release_year — когда выпущен в прокат
-# rating — возрастной рейтинг
-# duration — длительность
-# duration_type — минуты или сезоны
-# listed_in — список жанров и подборок
-# description — краткое описание
-# -----------------------
