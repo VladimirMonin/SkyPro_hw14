@@ -1,6 +1,6 @@
 from config import *
 import sqlite3
-
+import json
 
 class VideosDao:
 
@@ -129,14 +129,17 @@ class VideosDao:
                         """
         result = self.get_sqlite_connection(sqlite_query)
 
+        return self.get_json_dumps(result)
+
+    def get_json_dumps(self, data):
+
+        result = json.dumps(data, ensure_ascii=False, indent=4)
         return result
 
 
-
-
-dao = VideosDao()
-search = dao.get_by_type_gengre_year('TV Show', 'Adventure', 2019)
-print(search)
+# dao = VideosDao()
+# search = dao.get_by_type_gengre_year('TV Show', 'Adventure', 2019)
+# print(search)
 
 
 # Структура таблицы
